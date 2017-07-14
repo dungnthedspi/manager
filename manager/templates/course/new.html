@@ -1,0 +1,42 @@
+{% extends "/layout/base.html" %}
+
+{% block title %}Create Course{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+        .error { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="text-center">
+            <h1>Add Course</h1>
+        </div>
+        {{h.form(h.url(controller='courses', action='create'), method='post')}}
+            {% if c.form_errors %}
+                {% if c.form_errors.has_key('code') %}
+                    <p class="error">{{c.form_errors['code']}}</p>
+                {% endif %}
+                    Code: {{h.text('code', class= 'form-control', value=c.form_result['code'] or '')}}
+                {% if c.form_errors.has_key('name') %}
+                    <p class="error">{{c.form_errors['name']}}</p>
+                {% endif %}
+                    Name: {{h.text('name', class= 'form-control', value=c.form_result['name'] or '')}}
+                {% if c.form_errors.has_key('number') %}
+                    <p class="error">{{c.form_errors['number']}}</p>
+                {% endif %}
+                    Number: <input type="number" name="number" class="form-control" value="c.form_result['number] or ''">
+            {% else %}
+                    Code: {{h.text('name', class= 'form-control')}}
+                    Name: {{h.text('email', class= 'form-control')}}
+                    Number: <input type="number" name="number" class="form-control">
+            {% endif %}
+        <div class="text-center">
+            {{h.submit('Submit', value='submit', class= 'btn btn-primary')}}
+        </div>
+        {{h.end_form()}}
+    </div>
+</div>
+{% endblock %}

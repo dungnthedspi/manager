@@ -1,0 +1,36 @@
+{% extends "/layout/base.html" %}
+
+{% block title %}Create Student{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+        .error { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="text-center">
+            <h1>Register Course</h1>
+        </div>
+        {{ h.form(h.url(controller='register', action='create'),method='POST') }}
+            {% if c.form_errors %}
+                {% if c.form_errors.has_key('student_id') %}
+                <p class="error">{{ c.form_errors['student_id'] }}</p>
+                {% endif %}
+                Student: {{ h.text('email', value=c.form_result['email'] or '',
+                class="form-control") }}
+            {% else %}
+                {{ h.hidden('student_id', c.student.id) }}
+                Course: {{ h.select('course_id', None, h.create_courses_options(c.courses),
+                prompt="Please choose ...", class="form-control") }}
+                {% endif %}
+            <br>
+            <div class="text-center">
+                {{ h.submit('submit', 'Submit',class="btn btn-primary") }}
+            </div>
+        {{ h.end_form() }}
+    </div>
+</div>
+{% endblock %}

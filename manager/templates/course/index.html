@@ -1,0 +1,58 @@
+{% extends "/layout/base.html" %}
+{% block title %}Course{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .custab{
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin: 5% 0;
+            box-shadow: 3px 3px 2px #ccc;
+            transition: 0.5s;
+            }
+        .custab:hover{
+            box-shadow: 3px 3px 0px transparent;
+            transition: 0.5s;
+            }
+    </style>
+{% endblock %}
+{% block content %}
+{{c.courses.pager('Page $page: $link_previous $link_next ~4~')}}
+<div class="container">
+    <div class="row col-md-8 col-md-offset-2 custyle">
+    <table class="table table-striped custab">
+    <thead>
+    <a href="{{h.url(controller='courses', action='new')}}" class="btn btn-primary btn-xs pull-right">
+        <b>+</b> Add new courses
+    </a>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Number</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+        {% for course in c.courses %}
+            <tr>
+                <td>{{course.id}}</td>
+                <td>{{course.name}}</td>
+                <td>{{course.code}}</td>
+                <td>{{course.number}}</td>
+                <td class="text-center">
+                    <a href="{{h.url(controller='courses', action='show', id=course.id)}}" class='btn btn-info btn-xs' >
+                        <span class="glyphicon glyphicon-eye-open"></span> Show
+                    </a>
+                    <a href="{{h.url(controller='courses', action='edit', id=course.id)}}" class='btn btn-info btn-xs' >
+                        <span class="glyphicon glyphicon-edit"></span> Edit
+                    </a>
+                    <a href="{{h.url(controller='courses', action='delete', id=course.id)}}" class="btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-remove"></span> Del
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
+{% endblock %}

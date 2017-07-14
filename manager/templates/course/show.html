@@ -1,0 +1,54 @@
+{% extends "/layout/base.html" %}
+{% block title %}Student - Index {% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-2">
+        <h1>
+            Code: {{c.course.code}}
+        </h1>
+        <hr>
+
+        <div class="list-group">
+            <div class="list-group-item">
+                <span class="glyphicon glyphicon-user"></span>
+                Name: {{c.course.name}}
+            </div>
+        </div>
+        <div class="list-group">
+            <div class="list-group-item">
+                <span class="glyphicon glyphicon-user"></span>
+                Number: {{c.course.number}}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <table class="table table-bordered">
+            <thead>
+                <th class="center">Name</th>
+                <th class="center">Email</th>
+            </thead>
+            <tbody>
+                {% if c.course.students|length == 0 %}
+                    <tr>
+                        <td colspan="4">Chua co SV dang ki</td>
+                    </tr>
+                {% else %}
+                    {%for student in c.course.students%}
+                        <tr>
+                            <td class="center">
+                                <a href="{{h.url(controller='student',action='show',id=student.id)}}">
+                                    {{student.name}}
+                                </a>
+                            </td>
+                            <td class="center">{{student.email}}</td>
+                        </tr>
+                    {%endfor%}
+                {% endif %}
+            </tbody>
+        </table>
+        <div class="text-center">
+        </div>
+    </div>
+</div>
+{% endblock %}

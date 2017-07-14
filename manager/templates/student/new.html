@@ -1,0 +1,38 @@
+{% extends "/layout/base.html" %}
+
+{% block title %}Create Student{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+        .error { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="text-center">
+            <h1>Add Student</h1>
+        </div>
+        {{h.form(h.url(controller='students', action='create'), method='post')}}
+            {% if c.form_errors %}
+                {% if c.form_errors.has_key('name') %}
+                    <p class="error">{{c.form_errors['name']}}</p>
+                {% endif %}
+                    Name: {{h.text('name', class= 'form-control', value=c.form_result['name'] or '')}}
+                {% if c.form_errors.has_key('email') %}
+                    <p class="error">{{c.form_errors['email']}}</p>
+                {% endif %}
+                    Email: {{h.text('email', class= 'form-control', value=c.form_result['email'] or '')}}
+            {% else %}
+                    Name: {{h.text('name', class= 'form-control')}}
+                    Email Address: {{h.text('email', class= 'form-control')}}
+            {% endif %}
+        <br>
+        <div class="text-center">
+            {{h.submit('Submit', value='submit', class= 'btn btn-primary')}}
+        </div>
+        {{h.end_form()}}
+    </div>
+</div>
+{% endblock %}

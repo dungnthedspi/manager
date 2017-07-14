@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        .custab{
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin: 5% 0;
+            box-shadow: 3px 3px 2px #ccc;
+            transition: 0.5s;
+            }
+        .custab:hover{
+            box-shadow: 3px 3px 0px transparent;
+            transition: 0.5s;
+            }
+        .flash{
+            list-style: none;
+        }
+
+        .alert-error {
+          background-color: #f2dede;
+          border-color: #eed3d7;
+          color: #b94a48;
+          text-align: left;
+        }
+
+        .alert-alert {
+          background-color: #f2dede;
+          border-color: #eed3d7;
+          color: #b94a48;
+          text-align: left;
+        }
+
+        .alert-success {
+          background-color: #dff0d8;
+          border-color: #d6e9c6;
+          color: #468847;
+          text-align: left;
+        }
+
+        .alert-notice {
+          background-color: #dff0d8;
+          border-color: #d6e9c6;
+          color: #468847;
+          text-align: left;
+}
+    </style>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <ul class="flash">
+        {% for messages in h.flash.pop_messages() %}
+        <div class="alert alert-{{messages.category}}">
+            <li>{{messages}}</li>
+        </div>
+        {% endfor %}
+    </ul>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        &copy; Copyright 2017 by <a href="http://domain.invalid/">DungNT</a>
+        {% endblock %}
+    </div>
+</body>
+</html>
