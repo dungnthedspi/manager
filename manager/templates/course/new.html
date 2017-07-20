@@ -1,6 +1,6 @@
 {% extends "/layout/base.html" %}
 
-{% block title %}Create Course{% endblock %}
+{% block title %}Course - Create{% endblock %}
 {% block head %}
     {{ super() }}
     <style type="text/css">
@@ -29,8 +29,8 @@
                 {% endif %}
                     Number: <input type="number" name="number" class="form-control" value="c.form_result['number] or ''">
             {% else %}
-                    Code: {{h.text('name', class= 'form-control')}}
-                    Name: {{h.text('email', class= 'form-control')}}
+                    Code: {{h.text('code', class= 'form-control')}}
+                    Name: {{h.text('name', class= 'form-control')}}
                     Number: <input type="number" name="number" class="form-control">
             {% endif %}
         <div class="text-center">

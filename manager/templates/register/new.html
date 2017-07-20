@@ -22,9 +22,10 @@
                 Student: {{ h.text('email', value=c.form_result['email'] or '',
                 class="form-control") }}
             {% else %}
-                {{ h.hidden('student_id', c.student.id) }}
+                Student: {{ h.select('student_id', None, h.create_students_options(c.students),
+                prompt="Choose student", class="form-control") }}
                 Course: {{ h.select('course_id', None, h.create_courses_options(c.courses),
-                prompt="Please choose ...", class="form-control") }}
+                prompt="Choose course", class="form-control") }}
                 {% endif %}
             <br>
             <div class="text-center">

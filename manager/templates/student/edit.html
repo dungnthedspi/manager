@@ -1,6 +1,6 @@
 {% extends "/layout/base.html" %}
 
-{% block title %}Create Student{% endblock %}
+{% block title %}Student - Edit{% endblock %}
 {% block head %}
     {{ super() }}
     <style type="text/css">
@@ -15,6 +15,7 @@
                 <h1>Edit Student</h1>
             </div>
         {{h.form(h.url(controller='students', action='update', id=request.urlvars['id']), method='post')}}
+            {% if c.form_errors %}
                 {% if c.form_errors.has_key('name') %}
                     <p class="error">{{c.form_errors['name']}}</p>
                 {% endif %}
@@ -23,6 +24,20 @@
                     <p class="error">{{c.form_errors['email']}}</p>
                 {% endif %}
                     Email: {{h.text('email', class= 'form-control', value=c.form_result['email'] or '')}}
+                {% if c.form_errors.has_key('password') %}
+                    <p class="error">{{c.form_errors['password']}}</p>
+                {% endif %}
+                    Password: {{h.password('password', class= 'form-control', value=c.form_result['password'] or '')}}
+                {% if c.form_errors.has_key('password_confirm') %}
+                    <p class="error">{{c.form_errors['password_confirm']}}</p>
+                {% endif %}
+                    Confirm Password: {{h.password('password_confirm', class= 'form-control', value=c.form_result['password_confirm'] or '')}}
+            {% else %}
+                    Name: {{h.text('name', class= 'form-control', value=c.form_result['name'])}}
+                    Email Address: {{h.text('email', class= 'form-control', value=c.form_result['email'])}}
+                    Password: {{h.password('password', class= 'form-control', value=c.form_result['password'])}}
+                    Confirm Password: {{h.password('password_confirm', class= 'form-control', value=c.form_result['password_confirm'])}}
+            {% endif %}
         <br>
         <div class="text-center">
             {{h.submit('Submit', value='submit', class= 'btn btn-primary')}}

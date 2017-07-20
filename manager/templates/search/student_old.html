@@ -1,0 +1,57 @@
+{% extends "/layout/base.html" %}
+{% block title %}Search - Course {% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h3>Search Student</h3>
+            {{ h.form(h.url(controller='search', action='student'), method='GET') }}
+                {% if c.form_result %}
+                    Name: {{ h.text('name', value=c.form_result['name'] or '',
+                        class="form-control") }}
+                    Email: {{ h.text('email', value=c.form_result['email'] or '',
+                        class="form-control") }}
+                {% else %}
+                    Name: {{ h.text('name', class="form-control") }}
+                    Email: {{ h.text('email', class="form-control") }}
+                {% endif %}
+                <br>
+                <div class="text-center">
+                {{ h.submit('search', 'Search',class="btn btn-primary") }}
+                </div>
+            {{ h.end_form() }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="center">Name</th>
+                    <th class="center">Email</th>
+                    <th class="center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if c.students|length == 0 %}
+                    <tr>
+                        <td colspan="3">Khong tim thay</td>
+                    </tr>
+                {% else %}
+                {% for student in c.students %}
+                    <tr>
+                        <td class="center">{{student.name}}</td>
+                        <td class="center">{{student.email}}</td>
+                        <td><a href="{{h.url(controller='student',action='show',id=student.id)}}">Show</a></td>
+                    </tr>
+                {% endfor %}
+                <div >
+                    {{c.students.pager('Page $page: $link_previous $link_next ~4~',
+                        email=c.form_result['email'], name=c.form_result['name'])}}
+                </div>
+                {% endif %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

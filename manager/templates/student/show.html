@@ -1,12 +1,31 @@
 {% extends "/layout/base.html" %}
-{% block title %}Student - Index {% endblock %}
+{% block title %}Student - Show {% endblock %}
 
 {% block content %}
+<div class="container">
 <div class="row">
     <div class="col-md-3">
-        <h1>
-            Name: {{c.student.name}}
-        </h1>
+        <div class="text-center">
+            <div>
+                <form method='post'
+                      style="background:url({{h.image_name(c.student)}}); background-size: 200px 200px; background-repeat: no-repeat;"
+                      id ='upload-file' enctype="multipart/form-data">
+                    <input type="file" name="avatar" id="my_file" />
+                    <div id="div_action" style="display: none" class="modal">
+                        <div class="modal-content">
+                            <div id="img_src"></div>
+                            <hr>
+                            <div id='action_button'>
+                                <input type="hidden" name = 'student' id = 'student_id' value="{{request.urlvars['id']}}" />
+                                <input type='submit' id='upload-file-btn' value='OK' class="btn btn-primary" style="width: 10%"/>
+                                <input type='submit' id='cancle-upload-btn' value='CANCLE' class="btn btn-danger" style="width: 10%"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <h1>Name: {{c.student.name}}</h1>
+        </div>
         <hr>
 
         <div class="list-group">
@@ -16,59 +35,45 @@
             </div>
         </div>
     </div>
-    <div class="col-md-5">
-        <h3>Registered</h3>
-        <table class="table table-bordered">
+    <div class="col-md-9">
+        <div class="text-center">
+            <h3>Course Registered</h3>
+        </div>
+        <table class="table table-striped custab">
             <thead>
-            <tr>
-                <th class="center">Code</th>
-                <th class="center">Name</th>
-                <th class="center">Number</th>
-                <th class="center">Action</th>
-            </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Number</th>
+                    <th>Action</th>
+                </tr>
             </thead>
-            <tbody>
                 {% if c.student.courses|length == 0 %}
                     <tr>
                         <td colspan="4">Chua dang ki lop nao</td>
                     </tr>
                 {% else %}
-                    {%for course in c.student.courses%}
+                    {% for course in c.student.courses %}
                     <tr>
-                        <td class="center"><a href="{{h.url(controller='course',action='show',id=course.id)}}">{{course.code}}</a></td>
-                        <td class="center">{{course.name}}</td>
-                        <td class="center">{{course.number}}</td>
+                        <td>{{course.name}}</td>
+                        <td>{{course.code}}</td>
+                        <td>{{course.number}}</td>
                         <td>
+                            <a href="{{h.url(controller='courses', action='show', id=course.id)}}" class="btn btn-info btn-xs">
+                                <span class="glyphicon glyphicon-eye-open"></span> Show
+                            </a>
                             <a href="{{h.url(controller='register', action='delete', course_id=course.id, student_id = c.student.id)}}" class="btn btn-danger btn-xs">
                                 <span class="glyphicon glyphicon-remove"></span> Del
                             </a>
                         </td>
                     </tr>
-                    {%endfor%}
+                    {% endfor %}
                 {% endif %}
-            </tbody>
         </table>
         <div class="text-center">
         </div>
     </div>
-    <div class="col-md-3">
-        {{ h.form(h.url(controller='register', action='create'),method='POST') }}
-            {% if c.form_errors %}
-                {% if c.form_errors.has_key('student_id') %}
-                <p class="error">{{ c.form_errors['student_id'] }}</p>
-                {% endif %}
-                Student: {{ h.text('email', value=c.form_result['email'] or '',
-                class="form-control") }}
-            {% else %}
-                {{ h.hidden('student_id', c.student.id) }}
-                Course: {{ h.select('course_id', None, h.create_courses_options(c.courses),
-                prompt="Please choose ...", class="form-control") }}
-                {% endif %}
-            <br>
-            <div class="text-center">
-                {{ h.submit('', 'Submit',class="btn btn-primary") }}
-            </div>
-        {{ h.end_form() }}
-    </div>
 </div>
+</div>
+
 {% endblock %}

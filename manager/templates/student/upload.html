@@ -1,0 +1,11 @@
+{% extends "/layout/base.html" %}
+{% block title %}Student - Upload {% endblock %}
+{% block content %}
+<form  id="upload-image" enctype="multipart/form-data" method="POST" >
+        <input value="{{request.urlvars['id']}}" type="hidden" id="student_id" name="student_id">
+        <input type="file" name="image" id="image">
+        <input type="submit" name="submit" id="submit">
+</form>
+<div id="upload-results"></div>
+{% endblock %}
+

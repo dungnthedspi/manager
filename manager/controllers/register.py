@@ -15,6 +15,8 @@ log = logging.getLogger(__name__)
 
 class RegisterController(BaseController):
     def new(self):
+        c.students = Session.query(model.Student)
+        c.courses = Session.query(model.Course)
         return render('/register/new.html')
 
     def create(self):

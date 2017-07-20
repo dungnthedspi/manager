@@ -13,14 +13,16 @@ class Student(Base):
     name = Column(String(100))
     email = Column(String(100))
     password = Column(String(100))
+    avatar = Column(String(100))
     courses = relationship("Course",
                            secondary='association',
                            backref="students")
 
-    def __init__(self, name='', email='', password=''):
+    def __init__(self, name='', email='', password='', avatar=''):
         self.name = name
         self.email = email
         self.password = password
+        self.avatar = avatar
 
     def __repr__(self):
         return "<Student('%s')" % self.name

@@ -21,7 +21,11 @@ class CoursesController(BaseController):
         else:
             page = 1
         c.courses = webhelpers.paginate.Page(Session.query(model.Course), page=page, items_per_page=5)
-        return render('/course/index.html')
+        if 'partial' in request.params:
+            return render('/course/list-partial.html')
+        else:
+            return render('/course/list-full.html')
+
 
     def create(self):
         schema = CourseForm()
@@ -44,12 +48,13 @@ class CoursesController(BaseController):
 
     def update(self, id):
         schema = CourseForm()
+        c.id = int(id)
         try:
-            form_result = schema.to_python(request.params)
+            form_result = schema.to_python(request.params, c)
         except formencode.validators.Invalid, error:
             c.form_result = error.value
             c.form_errors = error.error_dict or {}
-            return render('/course/new.html')
+            return render('/course/edit.html')
         else:
             course = Session.query(model.Course).filter(Course.id == id).one()
             course.code = request.params['code']
