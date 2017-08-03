@@ -11,6 +11,9 @@ import webhelpers.paginate
 import formencode
 from manager.lib import helpers as h
 
+from authkit.permissions import ValidAuthKitUser
+from authkit.authorize.pylons_adaptors import authorize
+
 log = logging.getLogger(__name__)
 
 
@@ -46,6 +49,7 @@ class CoursesController(BaseController):
     def new(self, format='html'):
         return render('/course/new.html')
 
+    @authorize(h.auth.user_in(['admin', 'editor']))
     def update(self, id):
         schema = CourseForm()
         c.id = int(id)
@@ -63,6 +67,7 @@ class CoursesController(BaseController):
             Session.commit()
             redirect(url(controller='courses', action='index'))
 
+    @authorize(h.auth.has_delete_role)
     def delete(self, id):
         Session.delete(Session.query(model.Course).filter(Course.id == id).one())
         Session.commit()
@@ -72,6 +77,7 @@ class CoursesController(BaseController):
         c.course = Session.query(model.Course).filter(Course.id == id).one()
         return render('/course/show.html')
 
+    @authorize(h.auth.is_valid_user)
     def edit(self, id, format='html'):
         schema = CourseForm()
         course = Session.query(model.Course).filter(Course.id == id).one()

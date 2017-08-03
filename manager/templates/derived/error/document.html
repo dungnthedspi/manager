@@ -1,0 +1,12 @@
+{% extends "/layout/base.html" %}
+{% block title %}Sign in {% endblock %}
+
+{% block content %}
+<h1>Sign in</h1>
+{% if h.auth.authorized(h.auth.is_valid_user) %}
+    <li>Signed in as {{request.environ['REMOTE_USER']}},
+        <a href="{{h.url(controller='account', action='signout')}}">Sign out</a></li>
+{% else %}
+    <li><a href="{{h.url('signin')}}">Sign in</a></li>
+{% endif %}
+{% endblock %}

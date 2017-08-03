@@ -7,6 +7,9 @@ from paste.deploy.converters import asbool
 from pylons.middleware import ErrorHandler, StatusCodeRedirect
 from pylons.wsgiapp import PylonsApp
 from routes.middleware import RoutesMiddleware
+import authkit.authenticate
+import authkit.authorize
+from authkit.permissions import ValidAuthKitUser
 
 from manager.config.environment import load_environment
 
@@ -63,5 +66,8 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         # Serve static files
         static_app = StaticURLParser(config['pylons.paths']['static_files'])
         app = Cascade([static_app, app])
+    # permission = ValidAuthKitUser()
+    # app = authkit.authorize.middleware(app, permission)
+    app = authkit.authenticate.middleware(app, app_conf)
     app.config = config
     return app

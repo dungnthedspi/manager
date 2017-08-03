@@ -2,14 +2,15 @@
     <div class="row col-md-8 col-md-offset-2 custyle">
     <table class="table table-striped custab">
     <thead>
-    <a href="{{h.url(controller='students', action='new')}}" class="btn btn-primary btn-xs pull-right">
-        <b>+</b> Add new students
-    </a>
+    {% if h.auth.authorized(h.auth.has_admin_role) %}
+        <a href="{{h.url(controller='students', action='new')}}" class="btn btn-primary btn-sm pull-right add-controller">
+            <b>+</b> Add new students
+        </a>
+    {% endif %}
         <div>
             {{c.students.pager('Page $page: $link_previous $link_next ~4~', onclick="$('#page-area').load('%s'); return false;")}}
         </div>
         <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Email</th>
             <th class="text-center">Action</th>
@@ -17,8 +18,7 @@
     </thead>
         {% for student in c.students %}
             <tr>
-                <td>{{student.id}}</td>
-                <td>{{student.name}}</td>
+                <td>{{student.user_info.name}}</td>
                 <td>{{student.email}}</td>
                 <td class="text-center">
                     <a href="{{h.url(controller='students', action='show', id=student.id)}}" class='btn btn-info btn-xs' >
@@ -30,9 +30,11 @@
                     <a href="{{h.url(controller='students', action='upload', id=student.id)}}" class='btn btn-info btn-xs' >
                         <span class="glyphicon glyphicon-edit"></span> Upload
                     </a>
+                    {% if h.auth.authorized(h.auth.has_admin_role)%}
                     <a href="{{h.url(controller='students', action='delete', id=student.id)}}" class="btn btn-danger btn-xs">
                         <span class="glyphicon glyphicon-remove"></span> Del
                     </a>
+                    {% endif%}
                 </td>
             </tr>
         {% endfor %}

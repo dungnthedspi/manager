@@ -5,7 +5,6 @@
 <div class="container">
 <div class="row">
     <div class="col-md-3">
-        <div class="text-center">
             <div>
                 <form method='post'
                       style="background:url({{h.image_name(c.student)}}); background-size: 200px 200px; background-repeat: no-repeat;"
@@ -24,8 +23,7 @@
                     </div>
                 </form>
             </div>
-            <h1>Name: {{c.student.name}}</h1>
-        </div>
+            <h1>Name: {% if c.student.user_info: %}{{c.student.user_info.name}}{%endif%}</h1>
         <hr>
 
         <div class="list-group">

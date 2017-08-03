@@ -4,7 +4,9 @@ from paste.urlparser import PkgResourcesParser
 from pylons.middleware import error_document_template
 from webhelpers.html.builder import literal
 
-from manager.lib.base import BaseController
+from pylons import tmpl_context as c
+
+from manager.lib.base import BaseController, render
 
 class ErrorController(BaseController):
     """Generates error documents as and when they are required.
@@ -20,12 +22,16 @@ class ErrorController(BaseController):
         """Render the error document"""
         request = self._py_object.request
         resp = request.environ.get('pylons.original_response')
-        content = literal(resp.body) or cgi.escape(request.GET.get('message', ''))
-        page = error_document_template % \
-            dict(prefix=request.environ.get('SCRIPT_NAME', ''),
-                 code=cgi.escape(request.GET.get('code', str(resp.status_int))),
-                 message=content)
-        return page
+        code = cgi.escape(request.GET.get('code', ''))
+        content = cgi.escape(request.GET.get('message', ''))
+        if resp:
+            content = literal(resp.status)
+            code = code or cgi.escape(str(resp.status_int))
+        if not code:
+            raise Exception('No status code was found')
+        c.code = code
+        c.message = content
+        return render('/derived/error/document.html')
 
     def img(self, id):
         """Serve Pylons' stock images"""

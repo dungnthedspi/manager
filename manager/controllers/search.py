@@ -27,7 +27,8 @@ class SearchController(BaseController):
             page = request.params['page']
         else:
             page = 1
-        c.student = Session.query(model.Student).filter(model.Student.name.like('%' + search_text + '%')).all()
+        student_group_id = Session.query(model.Group).filter_by(name='student').first().uid
+        c.student = Session.query(model.Users).filter(Users.email.like('%' + search_text + '%'), Users.group_id == student_group_id).all()
         c.students = webhelpers.paginate.Page(c.student, page=page, items_per_page=5)
         c.form_result = request.params
         if 'partial' in request.params:
@@ -48,7 +49,7 @@ class SearchController(BaseController):
             page = request.params['page']
         else:
             page = 1
-        c.course = Session.query(model.Course).filter(model.Course.name.like('%' + search_text + '%')).all()
+        c.course = Session.query(model.Course).filter(Course.name.like('%' + search_text + '%')).all()
         c.courses = webhelpers.paginate.Page(c.course, page=page, items_per_page=5)
         c.form_result = request.params
         if 'partial' in request.params:
