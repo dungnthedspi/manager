@@ -23,7 +23,7 @@ class CoursesController(BaseController):
             page = request.params['page']
         else:
             page = 1
-        c.courses = webhelpers.paginate.Page(Session.query(model.Course), page=page, items_per_page=5)
+        c.courses = webhelpers.paginate.Page(Session.query(model.Course), page=page, items_per_page=10)
         if 'partial' in request.params:
             return render('/course/list-partial.html')
         else:
@@ -37,7 +37,7 @@ class CoursesController(BaseController):
         except formencode.validators.Invalid, error:
             c.form_result = error.value
             c.form_errors = error.error_dict or {}
-            return render('/course/new.html')
+            return render('/course/admin_new.html')
         else:
             code = request.params['code']
             name = request.params['name']

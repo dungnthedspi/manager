@@ -10,7 +10,7 @@ class Course(Base):
     __tablename__ = "course"
 
     id = Column(Integer, primary_key=True)
-    code = Column(String(100))
+    code = Column(String(10))
     name = Column(String(100))
     number = Column(Integer)
 

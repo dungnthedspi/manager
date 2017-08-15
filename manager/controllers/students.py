@@ -1,6 +1,7 @@
 import logging
 
 import os
+import hashlib
 import random
 from pylons import config
 
@@ -16,6 +17,9 @@ import formencode
 from manager.lib import helpers as h
 
 from authkit.authorize.pylons_adaptors import authorize
+
+from dateutil.relativedelta import relativedelta
+from pylons.decorators.rest import restrict
 
 import shutil
 
@@ -50,13 +54,28 @@ class StudentsController(BaseController):
             name = request.params['name']
             email = request.params['email']
             password = request.params['password']
+            string = name + email + password
+            token = hashlib.md5(string).hexdigest()
             c.user = model.Users(email=email, password=password)
-            c.user.user_info = model.UsersInfo(name=name)
+            c.user.user_info = model.UsersInfo(name=name, token=token)
             Session.add(c.user)
             request.environ['authkit.users'].user_set_group(c.user.email, 'student')
             Session.commit()
-            h.flash('Tao moi thanh cong', 'success')
-            redirect(url(controller='students', action='index'))
+
+            print 'commit xong'
+            from rq import Queue
+            from manager.queue.worker import conn
+            email_content = render('/layout/email_layout/signup.html')
+            print email_content
+            q = Queue(connection=conn)
+            print c.user.email
+            q.enqueue(h.send_mail, 'Subject', email_content, c.user.email)
+
+            h.flash('Successfully', 'success')
+            return redirect(url(controller='students', action='notice'))
+
+    def notice(self, format='html'):
+        return render('/student/notice.html')
 
     def new(self, format='html'):
         if request.environ.has_key('REMOTE_USER') and \
@@ -64,7 +83,6 @@ class StudentsController(BaseController):
             h.flash('Ban da dang nhap. Signout de tiep tuc', 'error')
             return redirect(h.url(controller='account', action='signedin'))
         return render('/student/new.html')
-        # return redirect(h.url(controller='students', action='index'))
 
     def update(self, id):
         schema = StudentForm()
@@ -80,7 +98,7 @@ class StudentsController(BaseController):
             h.flash('Cap nhat that bai', 'error')
             return render('/student/edit.html')
         else:
-            student.name = request.params['name']
+            student.user_info.name = request.params['name']
             student.email = request.params['email']
             student.password = request.params['password']
             Session.commit()
@@ -91,7 +109,8 @@ class StudentsController(BaseController):
         student = Session.query(model.Users).filter(Users.id == id).first()
         if not student:
             abort(404, '404 Not Found')
-        Session.delete(student)
+        request.environ['authkit.users'].user_delete(student.email)
+        Session.delete(student.user_info)
         Session.commit()
         redirect(url(controller='students', action='index'))
 
@@ -112,15 +131,11 @@ class StudentsController(BaseController):
         schema = StudentForm()
         student = Session.query(model.Users).filter(Users.id == id).first()
         dict = student.__dict__
-        c.form_result = dict.update(student.user.__dict__)
+        c.form_result = dict.update(student.user_info.__dict__)
         c.form_result = dict
         c.form_errors = {}
         c.id = int(id)
         return render('/student/edit.html')
-
-    def upload(self, id):
-        c.student = Session.query(model.Student).filter(Student.id == id).first()
-        return render('/student/upload.html')
 
     def save_image(self):
         id = request.POST['student_id']
@@ -137,3 +152,53 @@ class StudentsController(BaseController):
         Session.commit()
         # return (h.image('/uploads/' + student.avatar, '100px', '100px'))
         return h.image_name(c.student)
+
+    from pylons.decorators import jsonify
+    @jsonify
+    def events(self):
+        result = []
+        student_id = request.params['student_id']
+        student = Session.query(model.Users).filter_by(id=student_id).first()
+        if not student:
+            return result
+        courses = student.courses
+        for course in courses:
+            type = course.schedule.type
+            if type == model.ScheduleType.NO_REPEAT:
+                result.append({
+                    'title': course.name,
+                    'start': str(course.schedule.start),
+                    'end': str(course.schedule.end),
+                    'url': h.url(controller='courses', action='show', id=course.id)
+                })
+            else:
+                start = course.schedule.start
+                end = course.schedule.end
+                while start.date() < course.schedule.end_repeat:
+                    result.append({
+                        'title': course.name,
+                        'start': str(start),
+                        'end': str(end),
+                        'url': h.url(controller='courses', action='show', id=course.id),
+                    })
+                    if type == model.ScheduleType.WEEKLY:  # repeat weekly
+                        start = start + relativedelta(weeks=1)
+                        end = end + relativedelta(weeks=1)
+                    elif type == model.ScheduleType.MONTHLY:  # repeat monthly
+                        start = start + relativedelta(months=1)
+                        end = end + relativedelta(months=1)
+        return result
+
+    @restrict('GET')
+    def active(self):
+        token = request.params['token']
+        student = Session.query(model.UsersInfo).filter_by(token=token).first()
+        if student:
+            student.active = 1
+            Session.commit()
+            h.flash('Tai khoan cua ban da active thanh cong. Moi ban dang nhap de tiep tuc su dung.', 'success')
+
+        else:
+            h.flash('Duong dan kich hoat chua chinh xac.', 'error')
+        redirect(url(controller='account', action='signin'))
+

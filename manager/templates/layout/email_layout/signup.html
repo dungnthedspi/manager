@@ -1,0 +1,9 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+Hello {{c.user.user_info.name}} !!<br>
+Day la duong dan xac thuc tai khoan cua ban.<br>
+<a href="{{'http://'+request.host+h.url(controller='students', action='active', token = c.user.user_info.token)}}">Click here</a><br>
+Cam on ban da dang ki!
+</body>

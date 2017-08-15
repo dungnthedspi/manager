@@ -3,6 +3,8 @@ from manager.model.meta import Session, Base
 from manager.model.users import Users
 from manager.model.course import Course
 from manager.model.users_info import UsersInfo
+from manager.model.course_schedule import CourseSchedule
+from manager.model.course_schedule import ScheduleType
 import sqlalchemy as sa
 from sqlalchemy import orm
 

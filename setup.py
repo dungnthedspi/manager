@@ -30,7 +30,10 @@ setup(
     entry_points="""
     [paste.app_factory]
     main = manager.config.middleware:make_app
-
+    
+    [paste.paster_command]
+    seed = manager.seed.seed:Seed
+    
     [paste.app_install]
     main = pylons.util:PylonsInstaller
     """,
